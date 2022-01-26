@@ -1,34 +1,9 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import React from 'react';
+import { useRouter} from 'next/router';
 import appConfig from './config.json';
 
-function GlobalStyle() {
-    return (
-        <style global jsx>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          list-style: none;
-        }
-        body {
-          font-family: 'Open Sans', sans-serif;
-        }
-        /* App fit Height */ 
-        html, body, #__next {
-          min-height: 100vh;
-          display: flex;
-          flex: 1;
-        }
-        #__next {
-          flex: 1;
-        }
-        #__next > * {
-          flex: 1;
-        }
-        /* ./App fit Height */ 
-      `}</style>
-    );
-}
+
 function Title(content) {
     const Tag = content.tag;
     return (
@@ -61,11 +36,12 @@ function Title(content) {
 //   export default HomePage
 
 export default function PaginaInicial() {
-    const username = 'Andy';
+    // const username = 'Andy';
+    const [username, setUsername] = React.useState('');
+    const roteamento = useRouter();
 
     return (
         <>
-            <GlobalStyle />
             <Box
                 styleSheet={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -92,6 +68,12 @@ export default function PaginaInicial() {
                     {/* Formulário */}
                     <Box
                         as="form"
+                        onSubmit={function(infos) {
+                            infos.preventDefault();
+                            roteamento.push('/chat');
+
+                            // window.location.href ='/chat'
+                        }}
                         styleSheet={{
                             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                             width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -101,16 +83,33 @@ export default function PaginaInicial() {
                         <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
                             {appConfig.name}
                         </Text>
-
+                        {/* <input
+                            type='text'
+                            value={username}
+                            onChange={function (event){
+                                //onde ta o valor?
+                                const valor = event.target.value;
+                                //trocar o valor da variavel com o react
+                                setUsername(valor);
+                            }}
+                        /> */}
                         <TextField
+                            value={username}
+                            placeholder='Type your github username'
+                            onChange={function (event){
+                                //onde ta o valor?
+                                const valor = event.target.value;
+                                //trocar o valor da variavel com o react
+                                setUsername(valor);
+                            }}
                             fullWidth
                             textFieldColors={{
                                 neutral: {
-                                    textColor: appConfig.theme.colors.neutrals[200],
-                                    mainColor: appConfig.theme.colors.neutrals[900],
-                                    mainColorHighlight: appConfig.theme.colors.primary[500],
-                                    backgroundColor: appConfig.theme.colors.neutrals[800],
-                                },
+                                   textColor: appConfig.theme.colors.neutrals[200],
+                                 mainColor: appConfig.theme.colors.neutrals[900],
+                                  mainColorHighlight: appConfig.theme.colors.primary[500],
+                                   backgroundColor: appConfig.theme.colors.neutrals[800],
+                               },
                             }}
                         />
                         <Button
@@ -151,7 +150,7 @@ export default function PaginaInicial() {
                                 width: '130px',
                                 height: '130px'
                             }}
-                            src={`https://i.ibb.co/p1xRrSn/Untitled-design-1.png`}
+                            src={`https://github.com/${username}.png`}
                         />
                         <Text
                             variant="body4"
