@@ -1,10 +1,31 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from './config.json';
+import { createClient } from '@supabase/supabase-js';
+
+//Como fazer AJAX
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzM1MTc2NiwiZXhwIjoxOTU4OTI3NzY2fQ.6MntrcGdVQP0O3f74GqVjlXTrkRXOWIRsTEu5Wn0DTg';
+
+const SUPABASE_URL = 'https://vdkbhibjuzingclnpxui.supabase.co';
+
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 
 export default function ChatPage() {
     const [mensagem, setMensagem] = React.useState('');
     const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
+
+    React.useEffect(() => {
+        supabaseClient
+        .from('mensagens')
+        .select('*')
+        .order('id', {ascending:false})
+        .then(({ data }) =>{
+            console.log('Dados da consulta:', data);
+            setListaDeMensagens(data);
+        });
+    }, [])
+   
 
     /*
     // Usuário
@@ -17,17 +38,27 @@ export default function ChatPage() {
     - [X] Vamos usar o onChange usa o useState (ter if pra caso seja enter pra limpar a variavel)
     - [X] Lista de mensagens 
     */
+
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            id: listaDeMensagens.length + 1,
-            de: 'Andy',
+            // id: listaDeMensagens.length + 1,
+            de: 'andressalconstantino',
             texto: novaMensagem,
         };
 
-        setListaDeMensagens([
-            mensagem,
-            ...listaDeMensagens,
-        ]);
+        supabaseClient
+            .from('mensagens')
+            .insert([
+                mensagem
+            ])
+            .then(({data}) => {
+                setListaDeMensagens([
+                    data[0],
+                    ...listaDeMensagens,
+                ]);
+            });
+
+        
         setMensagem('');
     }
 
@@ -95,7 +126,7 @@ export default function ChatPage() {
                                     handleNovaMensagem(mensagem);
                                 }
                             }}
-                            placeholder="Insira sua mensagem aqui..."
+                            placeholder="Type your message here..."
                             type="textarea"
                             styleSheet={{
                                 width: '100%',
@@ -174,7 +205,7 @@ function MessageList(props) {
                                     display: 'inline-block',
                                     marginRight: '8px',
                                 }}
-                                src={`https://github.com/andressalconstantino.png`}
+                                src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Text tag="strong">
                                 {mensagem.de}
