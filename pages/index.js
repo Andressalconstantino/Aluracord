@@ -70,7 +70,7 @@ export default function PaginaInicial() {
                         as="form"
                         onSubmit={function(infos) {
                             infos.preventDefault();
-                            roteamento.push('/chat');
+                            roteamento.push(`/chat?username=${username}`);
 
                             // window.location.href ='/chat'
                         }}

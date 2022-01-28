@@ -1,7 +1,9 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from './config.json';
+import { useRouter} from 'next/router';
 import { createClient } from '@supabase/supabase-js';
+import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 
 //Como fazer AJAX
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzM1MTc2NiwiZXhwIjoxOTU4OTI3NzY2fQ.6MntrcGdVQP0O3f74GqVjlXTrkRXOWIRsTEu5Wn0DTg';
@@ -12,8 +14,16 @@ const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 
 export default function ChatPage() {
+    const roteamento = useRouter();
+    const usuarioLogado = roteamento.query.username;
     const [mensagem, setMensagem] = React.useState('');
-    const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
+    const [listaDeMensagens, setListaDeMensagens] = React.useState([
+        {
+            id: 1,
+            de: 'andressalconstantino',
+            texto: ':stiker: URL_da_imagem',
+        }
+    ]);
 
     React.useEffect(() => {
         supabaseClient
@@ -22,7 +32,7 @@ export default function ChatPage() {
         .order('id', {ascending:false})
         .then(({ data }) =>{
             console.log('Dados da consulta:', data);
-            setListaDeMensagens(data);
+            // setListaDeMensagens(data);
         });
     }, [])
    
@@ -42,7 +52,7 @@ export default function ChatPage() {
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             // id: listaDeMensagens.length + 1,
-            de: 'andressalconstantino',
+            de: usuarioLogado,
             texto: novaMensagem,
         };
 
@@ -139,6 +149,7 @@ export default function ChatPage() {
                                 color: appConfig.theme.colors.neutrals[200],
                             }}
                         />
+                        <ButtonSendSticker />
                     </Box>
                 </Box>
             </Box>
